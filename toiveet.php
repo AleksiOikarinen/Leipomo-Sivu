@@ -1,9 +1,15 @@
 <?php
-require "yhteys.php";
+
+$host     = 'db';
+$dbname   = 'wishesDb';
+$username = 'root';
+$password = 'password';
+
+$db = new mysqli($host, $username, $password, $dbname);
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $message = $yhteys->real_escape_string($_POST["message"]);
-    $yhteys->query("INSERT INTO wishes (message) VALUES ('$message')");
+    $message = $db->real_escape_string($_POST["message"]);
+    $db->query("INSERT INTO wishes (message) VALUES ('$message')");
 }
 ?>
 
@@ -17,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <h3>Toiveet:</h3>
 
 <?php
-$result = $yhteys->query("SELECT * FROM wishes ORDER BY id DESC");
+$result = $db->query("SELECT * FROM wishes ORDER BY id DESC");
 
 while ($row = $result->fetch_assoc()) {
     echo "<p>" . htmlspecialchars($row["message"]) . "</p>";
