@@ -1,9 +1,13 @@
 <?php
-
 require "yhteys.php";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $message = $yhteys->real_escape_string($_POST["message"]);
+    $yhteys->query("INSERT INTO wishes (message) VALUES ('$message')");
+}
 ?>
 
-<h2>Jätä toiveesi anonyymisti</h2>h2>
+<h2>Jätä toiveesi anonyymisti</h2>
 
 <form method="POST">
     <textarea name="message" required></textarea><br>
@@ -15,6 +19,7 @@ require "yhteys.php";
 <?php
 $result = $yhteys->query("SELECT * FROM wishes ORDER BY id DESC");
 
-while($row = $result->fetch_assoc()) {
-    echo "<p>" . $row["message"] . "</p>";
+while ($row = $result->fetch_assoc()) {
+    echo "<p>" . htmlspecialchars($row["message"]) . "</p>";
 }
+?>
