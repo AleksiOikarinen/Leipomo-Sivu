@@ -1,21 +1,28 @@
 <?php
 
-$host     = 'db';
-$dbname   = 'wishesDb';
+$host = 'db';
+$dbname = 'wishesDb';
 $username = 'root';
 $password = 'password';
 
-$db = new mysqli($host, $username, $password, $dbname);
+$database = new mysqli($host, $username, $password, $dbname);
+
+if ($database->connect_error) {
+    die("Tietokantavirhe: " . $database->connect_error);
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $message = $db->real_escape_string($_POST["message"]);
-    $db->query("INSERT INTO wishes (message) VALUES ('$message')");
+    $message = $_POST["message"];
+
+    $stmt = $database->prepare("INSERT INTO wishes (message) VALUES (?)");
+    $stmt->bind_param("s", $message);
+    $stmt->execute();
 }
 ?>
 
 <h2>Jätä toiveesi anonyymisti</h2>
 
-<form method="POST">
+<form method="POST" action="">
     <textarea name="message" required></textarea><br>
     <button type="submit">Lähetä</button>
 </form>
@@ -23,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <h3>Toiveet:</h3>
 
 <?php
-$result = $db->query("SELECT * FROM wishes ORDER BY id DESC");
+$result = $database->query("SELECT * FROM wishes ORDER BY id DESC");
 
 while ($row = $result->fetch_assoc()) {
     echo "<p>" . htmlspecialchars($row["message"]) . "</p>";
